@@ -1,0 +1,503 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "Swagger PH",
+    "license": {
+      "name": "MIT"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8000"
+    }
+  ],
+  "paths": {
+    "/welcome": {
+      "get": {
+        "summary": "Protected Route - Requires JWT Token",
+        "tags": ["Protected"],
+        "security": [
+          {
+            "bearerAuth": {
+              "type": "http",
+              "scheme": "bearer",
+              "bearerFormat": "JWT"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success: Authorized to access this route"
+          },
+          "401": {
+            "description": "Unauthorized: Missing or invalid token"
+          }
+        }
+      }
+    },
+    "/logout": {
+      "post": {
+        "summary": "Logout use and clear the token",
+        "tags": ["Authentication"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success: Authorized to access this route"
+          },
+          "401": {
+            "description": "Unauthorized: Missing or invalid token"
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "summary": "Login user",
+        "tags": ["Authentication"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                },
+                "example": {
+                  "username": "example_user",
+                  "password": "example_password"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User successfully logged in"
+          },
+          "400": {
+            "description": "Bad request: Invalid input"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/auth/register": {
+      "post": {
+        "summary": "Register a new user",
+        "tags": ["Authentication"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                },
+                "example": {
+                  "username": "example_user",
+                  "password": "example_password"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User successfully registered",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request: Invalid input"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/todos/{todoId}": {
+      "delete": {
+        "operationId": "deleteTodo",
+        "security": [
+          {
+            "bearerAuth": {
+              "type": "http",
+              "scheme": "bearer",
+              "bearerFormat": "JWT"
+            }
+          }
+        ],
+        "tags": ["todos"],
+        "summary": "Delete a todo by ID",
+        "description": "Deletes a todo from the JSONPlaceholder API by its unique ID.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "todoId",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "The ID of the todo to delete."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Delete todo successful."
+          },
+          "404": {
+            "description": "Todo not found"
+          }
+        }
+      }
+    },
+    "/todos/": {
+      "get": {
+        "summary": "Get all todos",
+        "operationId": "getTodos",
+        "security": [
+          {
+            "bearerAuth": {
+              "type": "http",
+              "scheme": "bearer",
+              "bearerFormat": "JWT"
+            }
+          }
+        ],
+        "tags": ["todos"],
+        "responses": {
+          "200": {
+            "description": "Get todos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Todo"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create new todo",
+        "operationId": "createTodo",
+        "tags": ["todos"],
+        "security": [
+          {
+            "bearerAuth": {
+              "type": "http",
+              "scheme": "bearer",
+              "bearerFormat": "JWT"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Todo"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "createTodo",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Todo"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health/": {
+      "get": {
+        "summary": "health",
+        "operationId": "health",
+        "tags": ["health"],
+        "responses": {
+          "200": {
+            "description": "health",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Health"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/workspaces": {
+      "get": {
+        "summary": "Get all workspaces",
+        "operationId": "getWorkspaces",
+        "tags": ["workspaces"],
+        "responses": {
+          "200": {
+            "description": "A list of workspaces",
+            "content": {
+              "application/json": {
+                "example": [
+                  {
+                    "id": 1,
+                    "name": "Personal Workspace",
+                    "members": [
+                      {
+                        "userId": 123,
+                        "username": "john_doe"
+                      },
+                      {
+                        "userId": 456,
+                        "username": "jane_doe"
+                      }
+                    ]
+                  },
+                  {
+                    "id": 2,
+                    "name": "Project A",
+                    "members": [
+                      {
+                        "userId": 123,
+                        "username": "john_doe"
+                      },
+                      {
+                        "userId": 789,
+                        "username": "bob_smith"
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new workspace",
+        "operationId": "postWorkspace",
+        "tags": ["workspaces"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "example": {
+                "name": "Project B"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Workspace created successfully",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/workspaces/{workspaceId}": {
+      "get": {
+        "summary": "Get workspace details by ID",
+        "operationId": "getWorkspace",
+        "tags": ["workspaces"],
+        "parameters": [
+          {
+            "name": "workspaceId",
+            "in": "path",
+            "required": true,
+            "description": "ID of the workspace",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Workspace details",
+            "content": {
+              "application/json": {
+                "example": {
+                  "id": 1,
+                  "name": "Personal Workspace",
+                  "members": [
+                    {
+                      "userId": 123,
+                      "username": "john_doe"
+                    },
+                    {
+                      "userId": 456,
+                      "username": "jane_doe"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/workspaces/{workspaceId}/invite": {
+      "post": {
+        "summary": "Invite a member to a workspace",
+        "operationId": "inviteToWorkspace",
+        "tags": ["workspaces"],
+        "parameters": [
+          {
+            "name": "workspaceId",
+            "in": "path",
+            "required": true,
+            "description": "ID of the workspace",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "example": {
+                "memberId": 789
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Invitation sent successfully"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "Health": {
+        "type": "object",
+        "required": ["data"],
+        "properties": {
+          "data": {
+            "type": "string"
+          }
+        }
+      },
+      "User": {
+        "type": "object",
+        "required": ["data"],
+        "properties": {
+          "username": "string",
+          "_id": "string",
+          "token": "string"
+        }
+      },
+      "Workspace": {
+        "type": "object",
+        "required": ["data"],
+        "properties": {
+          "_id": "string",
+          "name": "string",
+          "members": "object"
+        }
+      },
+      "Todo": {
+        "type": "object",
+        "required": ["data"],
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "body": {
+            "type": "string"
+          },
+          "userId": {
+            "type": "string"
+          }
+        }
+      },
+
+      "Error": {
+        "type": "object",
+        "required": ["code", "message"],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}
